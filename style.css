@@ -335,17 +335,6 @@ input {
   background: #1e40af;
 }
 
-.button--ghost {
-  background: #fff;
-  color: var(--brand-ink);
-  border: 1px solid #d0d5dd;
-}
-
-.button--ghost:hover,
-.button--ghost:focus-visible {
-  background: #f9fafb;
-}
-
 .notice {
   margin-top: 12px;
   border-radius: 14px;

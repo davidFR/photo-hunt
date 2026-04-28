@@ -220,6 +220,7 @@
   async function handlePhotoSelection() {
     const selectedFile = elements.photoInput.files && elements.photoInput.files[0] ? elements.photoInput.files[0] : null;
     await processSelectedFile(selectedFile);
+    elements.photoInput.value = "";
   }
 
   async function processSelectedFile(file) {

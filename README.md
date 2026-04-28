@@ -31,13 +31,14 @@ app/
 
 ## Fonctionnement
 
-1. Le participant choisit une photo prise sur place depuis son mobile.
+1. Le participant choisit une photo depuis le selecteur natif du telephone (camera et/ou galerie selon l'OS et le navigateur).
 2. L'application lit les EXIF de la photo pour recuperer GPS et heure de prise de vue.
 3. L'evaluation est lancee automatiquement apres selection de la photo.
-4. Si le GPS EXIF est absent, l'app propose un fallback via `navigator.geolocation` avec un avertissement de fiabilite, et l'autorisation de geolocalisation est demandee automatiquement des qu'une photo sans GPS EXIF est selectionnee.
-5. La distance est calculee avec Haversine et comparee aux zones chargees depuis `gameConfig.json`.
-6. Si la photo est assez recente et situee dans une zone valide, la recompense associee est affichee.
-7. Une validation deja obtenue pour la meme zone sur le meme appareil est refusee via `localStorage`.
+4. Les photos deja dans la galerie peuvent etre importees a tout moment (utile pour rattraper des lieux manques en fin de parcours).
+5. Si le GPS EXIF est absent, l'app propose un fallback via `navigator.geolocation` avec un avertissement de fiabilite, et l'autorisation de geolocalisation est demandee automatiquement des qu'une photo sans GPS EXIF est selectionnee.
+6. La distance est calculee avec Haversine et comparee aux zones chargees depuis `gameConfig.json`.
+7. Si la photo est assez recente et situee dans une zone valide, la recompense associee est affichee.
+8. Une validation deja obtenue pour la meme zone sur le meme appareil est refusee via `localStorage`.
 
 ## Lancement local
 
@@ -168,6 +169,7 @@ Le script valide aussi automatiquement:
 
 ## Limitations connues
 
+- Le choix exact affiche par le selecteur photo depend du navigateur mobile (application web), contrairement aux applications natives qui peuvent ouvrir une interface media integree complete.
 - Les applications photo de certains telephones retirent parfois le GPS EXIF lors de partages ou retouches.
 - La date EXIF peut etre absente ; dans ce cas, l'application utilise `lastModified` avec un avertissement.
 - Le fallback navigateur est moins fiable que le GPS de la photo.
