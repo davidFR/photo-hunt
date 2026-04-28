@@ -34,7 +34,7 @@ app/
 1. Le participant choisit une photo prise sur place depuis son mobile.
 2. L'application lit les EXIF de la photo pour recuperer GPS et heure de prise de vue.
 3. L'evaluation est lancee automatiquement apres selection de la photo.
-4. Si le GPS EXIF est absent, l'app propose un fallback via `navigator.geolocation` avec un avertissement de fiabilite.
+4. Si le GPS EXIF est absent, l'app propose un fallback via `navigator.geolocation` avec un avertissement de fiabilite, et l'autorisation de geolocalisation est demandee automatiquement des qu'une photo sans GPS EXIF est selectionnee.
 5. La distance est calculee avec Haversine et comparee aux zones chargees depuis `gameConfig.json`.
 6. Si la photo est assez recente et situee dans une zone valide, la recompense associee est affichee.
 7. Une validation deja obtenue pour la meme zone sur le meme appareil est refusee via `localStorage`.
@@ -127,13 +127,13 @@ Le script valide aussi automatiquement:
 
 - Autoriser l'acces a l'appareil photo depuis Safari si vous utilisez la capture directe.
 - Dans Reglages > Confidentialite et securite > Service de localisation, verifier que l'appareil photo peut enregistrer la position.
-- Si les photos ne contiennent pas de GPS, l'app proposera le fallback de geolocalisation navigateur.
+- Si les photos ne contiennent pas de GPS, l'app proposera le fallback de geolocalisation navigateur et demandera automatiquement l'autorisation a la premiere photo sans GPS EXIF.
 
 ### Android
 
 - Verifier que l'appareil photo peut acceder a la localisation.
 - Verifier que la localisation du telephone est activee en haute precision le jour du jeu.
-- Autoriser la geolocalisation du navigateur si le fallback doit etre utilise.
+- Autoriser la geolocalisation du navigateur si le fallback doit etre utilise (l'autorisation peut etre demandee automatiquement des la selection d'une photo sans GPS EXIF).
 
 ## Tests
 

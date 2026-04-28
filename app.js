@@ -249,10 +249,13 @@
 
       if (!analysis.position) {
         elements.geolocationButton.hidden = false;
-        setStatus(
-          "GPS EXIF absent sur cette photo. Vous pouvez utiliser votre position actuelle comme fallback.",
-          "warning"
-        );
+        const usedFallback = await requestGeolocationFallbackValidation(file, true);
+        if (!usedFallback) {
+          setStatus(
+            "GPS EXIF absent sur cette photo. Autorisez la localisation du navigateur puis utilisez \"Utiliser ma position actuelle\".",
+            "warning"
+          );
+        }
       } else {
         elements.geolocationButton.hidden = true;
         await runAutomaticValidation(file);
@@ -371,12 +374,31 @@
   }
 
   async function handleGeolocationFallback() {
-    if (!navigator.geolocation) {
-      setStatus("La geolocalisation navigateur n'est pas disponible sur cet appareil.", "error");
+    const file = state.currentFile || getSelectedFile();
+    if (!file) {
+      setStatus("Veuillez choisir une photo a analyser.", "error");
       return;
     }
 
-    setStatus("Recuperation de votre position actuelle...", "warning");
+    await requestGeolocationFallbackValidation(file, false);
+  }
+
+  async function requestGeolocationFallbackValidation(file, isAutomaticAttempt) {
+    if (!navigator.geolocation) {
+      setStatus("La geolocalisation navigateur n'est pas disponible sur cet appareil.", "error");
+      return false;
+    }
+
+    if (!window.isSecureContext) {
+      setStatus("La geolocalisation navigateur exige une page HTTPS.", "error");
+      return false;
+    }
+
+    if (isAutomaticAttempt) {
+      setStatus("GPS EXIF absent. Demande de geolocalisation navigateur...", "warning");
+    } else {
+      setStatus("Recuperation de votre position actuelle...", "warning");
+    }
 
     try {
       const position = await getCurrentPosition();
@@ -385,9 +407,23 @@
         lng: position.coords.longitude,
         accuracy: position.coords.accuracy
       };
-      await runAutomaticValidation(state.currentFile);
+      elements.geolocationButton.hidden = true;
+      await runAutomaticValidation(file);
+      return true;
     } catch (error) {
-      setStatus(error.message || "Permission de geolocalisation refusee.", "error");
+      elements.geolocationButton.hidden = false;
+      const message = String(error && error.message ? error.message : "");
+
+      if (message.toLowerCase().includes("refusee")) {
+        setStatus(
+          "Permission de geolocalisation refusee. Activez-la dans le navigateur puis reessayez.",
+          "warning"
+        );
+      } else {
+        setStatus(message || "Impossible de recuperer la position actuelle.", "warning");
+      }
+
+      return false;
     }
   }
 
