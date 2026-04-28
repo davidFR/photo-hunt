@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Validation locale de zones de jeu a partir de photos geolocalisees.">
+  <title>Jeu cooperatif</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button id="helpToggle" class="help-fab" type="button" aria-label="Ouvrir l'aide" aria-expanded="false" aria-controls="helpPanel">?</button>
+  <section id="helpPanel" class="card help-panel" hidden aria-label="Aide">
+    <div class="help-panel__head">
+      <h2>Aide</h2>
+      <button id="helpClose" class="help-close" type="button" aria-label="Fermer l'aide">Fermer</button>
+    </div>
+    <h3>Etapes</h3>
+    <ol class="help-steps">
+      <li>Uploader votre photo du lieu.</li>
+      <li>Si vous êtes au bon endroit, la récompense vous sera donnée.</li>
+      <li>Vous pouvez consulter l'ensemble de vos récompenses tout au long du jeu.</li>
+    </ol>
+    <h3>Regles rapides</h3>
+    <ul class="rules-list">
+      <li>Photo recente requise selon la limite du jeu.</li>
+      <li>Le GPS EXIF est privilegie quand il est disponible.</li>
+      <li>Le fallback de geolocalisation est autorise mais moins fiable.</li>
+      <li>Une zone déjà validée sur cet appareil est refusée.</li>
+    </ul>
+    <h3>Confidentialite</h3>
+    <p>Les photos ne sont jamais envoyees. Les validations sont stockees localement sur votre appareil.</p>
+    <p id="gameInfo">Chargement des parametres du jeu...</p>
+  </section>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <img src="maif.svg" class="maif-logo" alt="Logo MAIF">
+      <div>
+        <p id="gameName" class="eyebrow">Jeu cooperatif</p>
+        <h1 id="gameDescription" class="site-title">Validation photo geolocalisee</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="layout">
+      <div class="stack">
+        <form id="gameForm" class="card form-card" novalidate>
+          <section class="form-section" aria-labelledby="photoTitle">
+            <div class="section-head">
+              <h2 id="photoTitle" class="boxed-title">Valider une zone</h2>
+            </div>
+            <input id="photoInput" name="photoInput" class="input input--hidden" type="file" accept="image/*" capture="environment" required>
+            <div id="uploadZone" class="upload-dropzone" role="button" tabindex="0" aria-label="Uploader votre photo" aria-controls="photoInput">
+              <p class="upload-dropzone__title">Uploader votre photo</p>
+              <p class="upload-dropzone__hint">Touchez ou glissez une image ici</p>
+            </div>
+            <div id="photoMeta" class="meta-list" hidden></div>
+            <div class="actions">
+              <button id="geolocationButton" class="button button--secondary" type="button" hidden>Utiliser ma position actuelle</button>
+            </div>
+            <div id="statusBox" class="notice" aria-live="polite" hidden></div>
+          </section>
+        </form>
+
+        <section class="card result-card" aria-labelledby="resultTitle">
+          <div class="section-head">
+            <h2 id="resultTitle" class="boxed-title">Lieux validés</h2>
+          </div>
+          <div id="summaryEmpty" class="empty-state">Aucune zone validée sur cet appareil.</div>
+          <ul id="summaryList" class="summary-list" hidden></ul>
+
+          <div class="section-head summary-head--result">
+            <h2 id="pendingTitle" class="boxed-title">Lieux à découvrir</h2>
+          </div>
+          <div id="pendingEmpty" class="empty-state" hidden>Tous les lieux ont été découverts.</div>
+          <ul id="pendingList" class="summary-list" hidden></ul>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <noscript>
+    <p class="noscript">Cette application necessite JavaScript pour lire les metadonnees EXIF et valider les zones.</p>
+  </noscript>
+
+  <script src="vendor/exifr-lite.umd.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

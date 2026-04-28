@@ -1,0 +1,42 @@
+{
+  "game": {
+    "name": "La Confrérie des Stéphane",
+    "description": "Jeu coopératif - Île de Ré",
+    "maxAgeMinutes": 240,
+    "defaultRadiusMeter": 150
+  },
+  "solution": {
+    "value": "Comment récupérer la première place du podium de la relation client ?",
+    "split": "syllable"
+  },
+  "places": [
+    {
+      "label": "Position 1",
+      "coordinates": "46.237841, -1.428317"
+    },
+    {
+      "label": "Position 2",
+      "coordinates": "46.206497, -1.501286"
+    },
+    {
+      "label": "Position 3",
+      "coordinates": "46.171284, -1.374952"
+    },
+    {
+      "label": "Position 4",
+      "coordinates": "46.228905, -1.558431"
+    },
+    {
+      "label": "Position 5",
+      "coordinates": "46.188672, -1.443219"
+    },
+    {
+      "label": "Position 6",
+      "coordinates": "46.252116, -1.517084"
+    },
+    {
+      "label": "Position 7",
+      "coordinates": "46.197553, -1.332748"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "game": {
+    "name": "Test du jeu sur le siège MAIF",
+    "description": "Jeu coopératif - Siège MAIF",
+    "maxAgeMinutes": 240,
+    "defaultRadiusMeter": 20
+  },
+  "solution": {
+    "value": "Vive la fête du slip",
+    "split": "mot"
+  },
+  "places": [
+    {
+      "label": "La déesse protégeant le siège",
+      "name" : "La minerve",
+      "coordinates": "46.330266447007624, -0.4859257076293209"
+    },
+    {
+      "label": "Rien de tel qu'un bon café",
+      "name" : "Le bar MAIF",
+      "coordinates": "46.328448417320644, -0.4859707849509553"
+    },
+    {
+      "label": "Un bâtiment plein de managers",
+      "name" : "Bâtiment I",
+      "radiusMeters" : 40,
+      "coordinates": "46.329995418778516, -0.4867759127609441"
+    },
+    {
+      "label": "Bienvenue à vous",
+      "name" : "Accueil",
+      "coordinates": "46.331201359978444, -0.48491173679766814"
+    },
+    {
+      "label": "Un peu d'effort pour garder la ligne",
+      "name" : "Salle de sport",
+      "radiusMeters" : 40,
+      "coordinates": "46.327913892445004, -0.4874032239385228"
+    }
+  ]
+}

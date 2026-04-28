@@ -1,0 +1,63 @@
+{
+  "game": {
+    "id": "4b52d379372a",
+    "name": "Test du jeu sur le siège MAIF",
+    "description": "Jeu coopératif - Siège MAIF",
+    "maxAgeMinutes": 240,
+    "defaultRadiusMeter": 20
+  },
+  "zones": [
+    {
+      "id": "9b7c9dfe346869df",
+      "label": "La déesse protégeant le siège",
+      "center": {
+        "lat": 46.330266447007624,
+        "lng": -0.4859257076293209
+      },
+      "reward": "1=Vive",
+      "name": "La minerve"
+    },
+    {
+      "id": "dc8705adf3532044",
+      "label": "Rien de tel qu'un bon café",
+      "center": {
+        "lat": 46.328448417320644,
+        "lng": -0.4859707849509553
+      },
+      "reward": "5=slip",
+      "name": "Le bar MAIF"
+    },
+    {
+      "id": "bf9a27b13b2ba982",
+      "label": "Un bâtiment plein de managers",
+      "center": {
+        "lat": 46.329995418778516,
+        "lng": -0.4867759127609441
+      },
+      "reward": "4=du",
+      "name": "Bâtiment I",
+      "radiusMeters": 40
+    },
+    {
+      "id": "505a03a7cff7be9d",
+      "label": "Bienvenue à vous",
+      "center": {
+        "lat": 46.331201359978444,
+        "lng": -0.48491173679766814
+      },
+      "reward": "3=fête",
+      "name": "Accueil"
+    },
+    {
+      "id": "5ecde8d7f43c36ba",
+      "label": "Un peu d'effort pour garder la ligne",
+      "center": {
+        "lat": 46.327913892445004,
+        "lng": -0.4874032239385228
+      },
+      "reward": "2=la",
+      "name": "Salle de sport",
+      "radiusMeters": 40
+    }
+  ]
+}
