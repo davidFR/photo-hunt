@@ -1,10 +1,10 @@
 {
   "game": {
-    "id": "4b52d379372a",
+    "id": "d649a8a28a13",
     "name": "Test du jeu sur le siège MAIF",
     "description": "Jeu coopératif - Siège MAIF",
     "maxAgeMinutes": 240,
-    "defaultRadiusMeter": 20
+    "defaultRadiusMeter": 15
   },
   "zones": [
     {
@@ -24,29 +24,30 @@
         "lat": 46.328448417320644,
         "lng": -0.4859707849509553
       },
-      "reward": "5=slip",
+      "reward": "4=du",
       "name": "Le bar MAIF"
     },
     {
-      "id": "bf9a27b13b2ba982",
+      "id": "c9d196f89a7c100b",
       "label": "Un bâtiment plein de managers",
       "center": {
         "lat": 46.329995418778516,
         "lng": -0.4867759127609441
       },
-      "reward": "4=du",
+      "reward": "2=la",
       "name": "Bâtiment I",
-      "radiusMeters": 40
+      "radiusMeters": 30
     },
     {
-      "id": "505a03a7cff7be9d",
+      "id": "0e7e1c7b57d1faa6",
       "label": "Bienvenue à vous",
       "center": {
         "lat": 46.331201359978444,
         "lng": -0.48491173679766814
       },
-      "reward": "3=fête",
-      "name": "Accueil"
+      "reward": "5=slip",
+      "name": "Accueil",
+      "radiusMeters": 20
     },
     {
       "id": "5ecde8d7f43c36ba",
@@ -55,7 +56,7 @@
         "lat": 46.327913892445004,
         "lng": -0.4874032239385228
       },
-      "reward": "2=la",
+      "reward": "3=fête",
       "name": "Salle de sport",
       "radiusMeters": 40
     }
