@@ -1,6 +1,6 @@
 # Jeu cooperatif photo-hunt - Template
 
-Application web 100% statique pour valider des zones de jeu a partir d'une photo prise sur mobile. Tout le traitement est local au navigateur : aucune photo n'est envoyee, aucune authentification n'est requise, aucun backend n'est necessaire.
+Application web 100% statique pour valider des zones de jeu a partir de la geolocalisation du smartphone. Tout le traitement est local au navigateur : aucune photo n'est demandee, aucune authentification n'est requise, aucun backend n'est necessaire.
 
 ## Arborescence
 
@@ -23,21 +23,18 @@ app/
 
 - `index.html` : interface mobile-first, structure en 3 etapes, resume des validations, messages d'erreur.
 - `style.css` : look MAIF, optimise mobile, cartes simples et lisibles.
-- `app.js` : chargement de configuration, lecture EXIF, geolocalisation navigateur, geofencing, anti-doublon localStorage, rendu UI.
+- `app.js` : chargement de configuration, geolocalisation navigateur, geofencing, anti-doublon localStorage, rendu UI.
 - `gameConfig.json` : fichier de configuration charge cote client.
 - `scripts/build-zones.js` : script de preparation pour definir ou regenerer `gameConfig.json` avant le jeu.
-- `vendor/exifr-lite.umd.js` : dependance locale pour lire les metadonnees EXIF sans CDN.
 - `vercel.json` : headers `no-store` pour eviter un cache stale de `gameConfig.json`.
 
 ## Fonctionnement
 
-1. Le participant choisit une photo prise sur place depuis son mobile.
-2. L'application lit les EXIF de la photo pour recuperer GPS et heure de prise de vue.
-3. L'evaluation est lancee automatiquement apres selection de la photo.
-4. Si le GPS EXIF est absent, l'app propose un fallback via `navigator.geolocation` avec un avertissement de fiabilite, et l'autorisation de geolocalisation est demandee automatiquement des qu'une photo sans GPS EXIF est selectionnee.
-5. La distance est calculee avec Haversine et comparee aux zones chargees depuis `gameConfig.json`.
-6. Si la photo est assez recente et situee dans une zone valide, la recompense associee est affichee.
-7. Une validation deja obtenue pour la meme zone sur le meme appareil est refusee via `localStorage`.
+1. Le participant appuie sur le bouton `Geolocalise-moi`.
+2. Le navigateur demande l'autorisation de geolocalisation (si necessaire).
+3. La position GPS courante est comparee aux zones chargees depuis `gameConfig.json`.
+4. Si la position est dans une zone valide, la recompense associee est affichee.
+5. Une validation deja obtenue pour la meme zone sur le meme appareil est refusee via `localStorage`.
 
 ## Lancement local
 
@@ -125,59 +122,57 @@ Le script valide aussi automatiquement:
 
 ### iPhone / iOS
 
-- Autoriser l'acces a l'appareil photo depuis Safari si vous utilisez la capture directe.
-- Dans Reglages > Confidentialite et securite > Service de localisation, verifier que l'appareil photo peut enregistrer la position.
-- Si les photos ne contiennent pas de GPS, l'app proposera le fallback de geolocalisation navigateur et demandera automatiquement l'autorisation a la premiere photo sans GPS EXIF.
+- Autoriser la geolocalisation pour Safari (ou le navigateur utilise).
+- Verifier que la localisation du telephone est activee.
+- Ouvrir l'application en HTTPS pour autoriser `navigator.geolocation`.
 
 ### Android
 
-- Verifier que l'appareil photo peut acceder a la localisation.
+- Autoriser la geolocalisation pour Chrome (ou le navigateur utilise).
 - Verifier que la localisation du telephone est activee en haute precision le jour du jeu.
-- Autoriser la geolocalisation du navigateur si le fallback doit etre utilise (l'autorisation peut etre demandee automatiquement des la selection d'une photo sans GPS EXIF).
+- Ouvrir l'application en HTTPS pour autoriser `navigator.geolocation`.
 
 ## Tests
 
 ### Tests fonctionnels a faire avant le jour J
 
-1. Photo recente prise dans une zone test avec GPS EXIF present.
-2. Photo recente hors zone pour verifier le message d'echec.
-3. Photo trop ancienne pour verifier le seuil `maxAgeMinutes`.
-4. Photo sans GPS EXIF puis validation via fallback geolocalisation.
-5. Refus d'une seconde validation de la meme zone sur le meme appareil.
-6. Verification de persistance locale apres rechargement de la page.
-7. Chargement en 4G/5G sur iPhone et Android.
-8. Ouverture en navigation privee pour verifier le comportement `localStorage` selon les navigateurs.
+1. Validation d'une zone avec geolocalisation activee.
+2. Tentative hors zone pour verifier le message d'echec.
+3. Refus d'une seconde validation de la meme zone sur le meme appareil.
+4. Verification de persistance locale apres rechargement de la page.
+5. Chargement en 4G/5G sur iPhone et Android.
+6. Ouverture en navigation privee pour verifier le comportement `localStorage` selon les navigateurs.
+7. Refus de permission geolocalisation pour verifier le message utilisateur.
 
 ### Check-list terrain
 
 1. Tester l'URL finale sur au moins deux iPhone et deux Android.
 2. Verifier le temps de chargement en conditions reseau reelles.
 3. Controler que les zones du fichier `gameConfig.json` correspondent bien aux lieux reels.
-4. Prendre une photo de reference sur chaque lieu cle avant l'evenement.
-5. Valider la marge du rayon en metres en marchant juste a l'exterieur puis a l'interieur.
-6. Confirmer le message utilisateur en cas de GPS absent, photo trop ancienne et permission refusee.
-7. Verifier que les recompenses affichees sont les bonnes.
-8. Garder une version offline de secours du projet sur un poste local.
+4. Valider la marge du rayon en metres en marchant juste a l'exterieur puis a l'interieur.
+5. Confirmer le message utilisateur en cas de permission refusee et hors zone.
+6. Verifier que les recompenses affichees sont les bonnes.
+7. Garder une version offline de secours du projet sur un poste local.
 
 ## Securite et vie privee
 
-- Aucune photo n'est envoyee au reseau.
+- Aucune photo n'est demandee.
 - Aucune donnee sensible n'est demandee.
 - Aucun tracking, cookie tiers ou analytics n'est integre.
 - Les validations restent sur l'appareil via `localStorage`.
 
 ## Limitations connues
 
-- Les applications photo de certains telephones retirent parfois le GPS EXIF lors de partages ou retouches.
-- La date EXIF peut etre absente ; dans ce cas, l'application utilise `lastModified` avec un avertissement.
-- Le fallback navigateur est moins fiable que le GPS de la photo.
+- La precision GPS varie selon le telephone, l'environnement (interieur/exterieur) et les conditions reseau.
+- La geolocalisation web exige une page HTTPS (ou localhost en local).
+- Si l'utilisateur refuse la permission, la validation est impossible tant que la permission n'est pas reautorisee.
 - En navigation privee, certains navigateurs peuvent effacer `localStorage` plus agressivement.
 
 ## Ameliorations possibles
 
 1. Ajouter un mode organisateur pour exporter/importer les validations locales.
-2. Afficher un apercu compresse de la photo sans conserver l'original.
-3. Ajouter une signature visuelle pour distinguer validation EXIF et validation geolocalisation.
+2. Ajouter un niveau de confiance lie a la precision GPS (accuracy).
+3. Ajouter une signature visuelle selon la qualite de precision geolocalisation.
 4. Ajouter un mode multi-langue si certains participants ne sont pas francophones.
 5. Integrer une carte offline simplifiee des zones autorisees.
 6. Ajouter un QR code par zone comme mecanisme de secours complementaire.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Validation locale de zones de jeu a partir de photos geolocalisees.">
+  <meta name="description" content="Validation locale de zones de jeu par geolocalisation navigateur.">
   <title>Jeu cooperatif</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -16,19 +16,20 @@
     </div>
     <h3>Etapes</h3>
     <ol class="help-steps">
-      <li>Uploader votre photo du lieu.</li>
-      <li>Si vous êtes au bon endroit, la récompense vous sera donnée.</li>
+      <li>Touchez le bouton Geolocalise-moi.</li>
+      <li>Autorisez la geolocalisation si le navigateur la demande.</li>
+      <li>Si vous etes au bon endroit, la recompense vous sera donnee.</li>
       <li>Vous pouvez consulter l'ensemble de vos récompenses tout au long du jeu.</li>
     </ol>
     <h3>Regles rapides</h3>
     <ul class="rules-list">
-      <li>Photo recente requise selon la limite du jeu.</li>
-      <li>Le GPS EXIF est privilegie quand il est disponible.</li>
-      <li>Le fallback de geolocalisation est autorise mais moins fiable.</li>
+      <li>La geolocalisation navigateur doit etre autorisee.</li>
+      <li>La precision GPS varie selon le telephone et l'environnement.</li>
+      <li>Si la permission est refusee: Android (parametres du navigateur > site/page > Position > Autoriser), iPhone (Reglages > Safari > Localisation > Autoriser), puis rechargez la page.</li>
       <li>Une zone déjà validée sur cet appareil est refusée.</li>
     </ul>
     <h3>Confidentialite</h3>
-    <p>Les photos ne sont jamais envoyees. Les validations sont stockees localement sur votre appareil.</p>
+    <p>Aucune photo n'est demandee. Les validations sont stockees localement sur votre appareil.</p>
     <p id="gameInfo">Chargement des parametres du jeu...</p>
   </section>
 
@@ -37,7 +38,7 @@
       <img src="maif.svg" class="maif-logo" alt="Logo MAIF">
       <div>
         <p id="gameName" class="eyebrow">Jeu cooperatif</p>
-        <h1 id="gameDescription" class="site-title">Validation photo geolocalisee</h1>
+        <h1 id="gameDescription" class="site-title">Validation geolocalisee</h1>
       </div>
     </div>
   </header>
@@ -46,18 +47,13 @@
     <section class="layout">
       <div class="stack">
         <form id="gameForm" class="card form-card" novalidate>
-          <section class="form-section" aria-labelledby="photoTitle">
+          <section class="form-section" aria-labelledby="geoTitle">
             <div class="section-head">
-              <h2 id="photoTitle" class="boxed-title">Valider une zone</h2>
+              <h2 id="geoTitle" class="boxed-title">Valider une zone</h2>
             </div>
-            <input id="photoInput" name="photoInput" class="input input--hidden" type="file" accept="image/*" capture="environment" required>
-            <div id="uploadZone" class="upload-dropzone" role="button" tabindex="0" aria-label="Uploader votre photo" aria-controls="photoInput">
-              <p class="upload-dropzone__title">Uploader votre photo</p>
-              <p class="upload-dropzone__hint">Touchez ou glissez une image ici</p>
-            </div>
-            <div id="photoMeta" class="meta-list" hidden></div>
+            <p class="hint">Mode simple: aucune photo n'est necessaire pour valider un lieu.</p>
             <div class="actions">
-              <button id="geolocationButton" class="button button--secondary" type="button" hidden>Utiliser ma position actuelle</button>
+              <button id="geolocationButton" class="button" type="button">Geolocalise-moi</button>
             </div>
             <div id="statusBox" class="notice" aria-live="polite" hidden></div>
           </section>
@@ -81,10 +77,9 @@
   </main>
 
   <noscript>
-    <p class="noscript">Cette application necessite JavaScript pour lire les metadonnees EXIF et valider les zones.</p>
+    <p class="noscript">Cette application necessite JavaScript pour acceder a la geolocalisation et valider les zones.</p>
   </noscript>
 
-  <script src="vendor/exifr-lite.umd.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
