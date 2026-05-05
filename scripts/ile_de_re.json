@@ -1,0 +1,134 @@
+{
+  "game": {
+    "name": "La Confrérie des Stéphane",
+    "description": "Jeu coopératif - Île de Ré",
+    "maxAgeMinutes": 240,
+    "defaultRadiusMeter": 30
+  },
+  "solution": {
+    "value": "Comment récupérer la première place du podium de la relation client ?",
+    "split": "syllable"
+  },
+  "map": {
+    "gridMeters": 2000
+  },
+  "places": [
+    {
+      "hint": "Saint-Clément-des-Baleines : je guide la nuit",
+      "name" : "Le phare des baleines",
+      "coordinates": "46.24432514933755, -1.561394660482297",
+      "radiusMeters" : 50
+    },
+    {
+      "hint": "Saint-Clément-des-Baleines : Position 2",
+      "name" : "Abri du canot de sauvetage",
+      "coordinates": "46.2412004378898, -1.5617976307129895"
+    },
+    {
+      "hint": "Saint-Clément-des-Baleines : Position 3",
+      "name" : "La Pyramide des Chaumes",
+      "coordinates": "46.243546388670495, -1.5534280640093392",
+      "radiusMeters" : 50
+    },
+    {
+      "hint": "Entre La Flotte et Rivedoux : fortifions-nous",
+      "name" : "Fort La Prée",
+      "coordinates": "46.18075302056117, -1.288699780424664",
+      "radiusMeters" : 130
+    },
+    {
+      "hint": "Ars-en-Ré : Position 3",
+      "name" : "Eglise d'Ars-en-Ré",
+      "coordinates": "46.20782016748613, -1.5156334494630086",
+      "radiusMeters" : 40
+    },
+    {
+      "hint": "Entre La Flotte et Rivedoux : Position 4",
+      "name" : "Abbaye des Châteliers",
+      "coordinates": "46.18582657617541, -1.2973742784337656",
+      "radiusMeters" : 50
+    },
+    {
+      "hint": "Saint-Martin-de-Ré : Position 5",
+      "name" : "Eglise de Saint-Martin de Ré et son Clocher Observatoire",
+      "coordinates": "46.20317446085296, -1.3684762548873834",
+      "radiusMeters" : 40
+    },
+    {
+      "hint": "Saint-Martin-de-Ré : Position 6",
+      "name" : "Porte Thoiras",
+      "coordinates": "46.20043589090053, -1.361600972937928"
+    },
+    {
+      "hint": "Saint-Martin-de-Ré : Position 7",
+      "name" : "La poudrière",
+      "coordinates": "46.199516286032164, -1.3631291467158886"
+    },
+    {
+      "hint": "Près de Loix : Position 8",
+      "name" : "La plage du Grouin",
+      "coordinates": "46.22703567773298, -1.4160239665865793",
+      "radiusMeters" : 200
+    },
+    {
+      "hint": "Le Bois-Plage-en-Ré : Position 9",
+      "name" : "Le Moulin de Bellère",
+      "coordinates": "46.19347909070046, -1.3701488800328823"
+    },
+    {
+      "hint": "Les Portes-en-Ré : Position 10",
+      "name" : "Maison du Fier",
+      "coordinates": "46.24059564602441, -1.5036885922911911",
+      "radiusMeters" : 50
+    },
+    {
+      "hint": "Les Portes-en-Ré : Position 11",
+      "name" : "La Maison-Phare de Trousse-Chemise",
+      "coordinates": "46.23523265668335, -1.481594791992791",
+      "radiusMeters" : 40
+    },
+    {
+      "hint": "Entre la Couarde-sur-Mer et Ars-en-Ré : Position 12",
+      "name" : "La Digue du Boutillon",
+      "coordinates": "46.20321648149895, -1.472964591823978",
+      "radiusMeters" : 400
+    },
+    {
+      "hint": "Ars-en-Ré : Position 13",
+      "name" : "Les Cabanes de Douaniers d’Ars-en-Ré",
+      "coordinates": "46.19444760228498, -1.5001853999608747",
+      "radiusMeters" : 100
+    },
+
+    {
+      "hint": "Sur la plage : blockhaus A, b ou C ?",
+      "name" : "Le Bois-Plage-en-Ré : Batterie Hertha B",
+      "coordinates": "46.184458530175405, -1.411198476196625"
+    },
+    {
+      "hint": "En pleine forêt : trouver la batterie allemande",
+      "name" : "Ars-en-Ré : Batterie Karola",
+      "coordinates": "46.21838259310512, -1.5321058223623816"
+    },
+    {
+      "hint": "Le blockhaus de la Plage de La Salée",
+      "name" : "Sainte-Marie-de-Ré : Batterie Ella",
+      "coordinates": "46.146435962318016, -1.3236524162807268"
+    },
+    {
+      "hint": "Position 14",
+      "name" : "Truc",
+      "coordinates": "46.20138083544109, -1.3314190869336358"
+    },
+    {
+      "hint": "Position 14",
+      "name" : "Truc",
+      "coordinates": "46.20138083544109, -1.3214190869336358"
+    },
+    {
+      "hint": "Position 14",
+      "name" : "Truc",
+      "coordinates": "46.20138083544109, -1.3114190869336358"
+    }
+  ]
+}
