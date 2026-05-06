@@ -41,6 +41,7 @@
     overviewMapInstance: null,
     overviewMarkersLayer: null,
     overviewUserLayer: null,
+    overviewCycleLayer: null,
     overviewMarkersHidden: false
   };
 
@@ -239,10 +240,26 @@
         wheelPxPerZoomLevel: 120
       });
 
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      const baseMapLayer = window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: "&copy; OpenStreetMap"
       }).addTo(state.overviewMapInstance);
+
+      state.overviewCycleLayer = window.L.layerGroup().addTo(state.overviewMapInstance);
+      loadCycleTracksLayer(state.overviewCycleLayer);
+
+      window.L.control.layers(
+        {
+          "Fond OSM": baseMapLayer
+        },
+        {
+          "Pistes cyclables": state.overviewCycleLayer
+        },
+        {
+          collapsed: true,
+          position: "topright"
+        }
+      ).addTo(state.overviewMapInstance);
 
       state.overviewMarkersLayer = window.L.layerGroup().addTo(state.overviewMapInstance);
       state.overviewUserLayer = window.L.layerGroup().addTo(state.overviewMapInstance);
@@ -276,6 +293,75 @@
     }
 
     state.overviewMapInstance.fitBounds(bounds, { padding: [26, 26] });
+  }
+
+  async function loadCycleTracksLayer(targetLayer) {
+    if (!targetLayer || !state.config || !Array.isArray(state.config.zones) || state.config.zones.length === 0) {
+      return;
+    }
+
+    targetLayer.clearLayers();
+
+    try {
+      const response = await fetch("./data/cycle-routes.osm.json", {
+        cache: "force-cache"
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur HTTP " + response.status);
+      }
+
+      const result = await response.json();
+      const elements = Array.isArray(result && result.elements) ? result.elements : [];
+      renderCycleTracks(targetLayer, elements);
+    } catch (error) {
+      console.warn("Impossible de charger les pistes cyclables locales:", error);
+      setOverviewStatus("Pistes cyclables indisponibles: donnees locales manquantes.", "warning");
+    }
+  }
+
+  function renderCycleTracks(targetLayer, elements) {
+    if (!targetLayer || !Array.isArray(elements)) {
+      return;
+    }
+
+    const seenWayIds = new Set();
+
+    elements.forEach(function (element) {
+      if (element.type !== "way" || !Array.isArray(element.geometry) || element.geometry.length < 2) {
+        return;
+      }
+
+      if (seenWayIds.has(element.id)) {
+        return;
+      }
+      seenWayIds.add(element.id);
+
+      const latLngs = element.geometry
+        .map(function (point) {
+          if (!point || !Number.isFinite(point.lat) || !Number.isFinite(point.lon)) {
+            return null;
+          }
+
+          return [point.lat, point.lon];
+        })
+        .filter(function (point) {
+          return Array.isArray(point);
+        });
+
+      if (latLngs.length < 2) {
+        return;
+      }
+
+      window.L.polyline(latLngs, {
+        color: "#16a34a",
+        weight: 3,
+        opacity: 0.92,
+        lineCap: "round",
+        lineJoin: "round",
+        dashArray: null
+      }).addTo(targetLayer);
+    });
   }
 
   function rebuildOverviewMarkers() {

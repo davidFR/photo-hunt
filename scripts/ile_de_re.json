@@ -6,7 +6,7 @@
     "defaultRadiusMeter": 30
   },
   "solution": {
-    "value": "Comment récupérer la première place du podium de la relation client ?",
+    "value": "Comment la MAIF peut récupérer la première place du podium de la relation client ?",
     "split": "syllable"
   },
   "map": {
@@ -14,10 +14,14 @@
   },
   "places": [
     {
-      "hint": "Saint-Clément-des-Baleines : je guide la nuit",
-      "name" : "Le phare des baleines",
-      "coordinates": "46.24432514933755, -1.561394660482297",
-      "radiusMeters" : 50
+      "hint": "Saint-Clément-des-Baleines : le phare des Baleines",
+      "name" : "Le phare des Baleines",
+      "coordinates": "46.24421543035579, -1.561109814925404"
+    },
+    {
+      "hint": "Saint-Clément-des-Baleines : le petit phare des Baleines",
+      "name" : "Le petit phare des baleines",
+      "coordinates": "46.24464665698059, -1.5619671760570941"
     },
     {
       "hint": "Saint-Clément-des-Baleines : Position 2",
@@ -97,7 +101,7 @@
       "hint": "Ars-en-Ré : Position 13",
       "name" : "Les Cabanes de Douaniers d’Ars-en-Ré",
       "coordinates": "46.19444760228498, -1.5001853999608747",
-      "radiusMeters" : 100
+      "radiusMeters" : 50
     },
 
     {
@@ -116,19 +120,44 @@
       "coordinates": "46.146435962318016, -1.3236524162807268"
     },
     {
-      "hint": "Position 14",
-      "name" : "Truc",
-      "coordinates": "46.20138083544109, -1.3314190869336358"
+      "hint": "La bouée rouge américaine",
+      "name" : "La bouée rouge américaine",
+      "coordinates": "46.19436239209493, -1.5065186225675848",
+      "radiusMeters" : 100
     },
     {
-      "hint": "Position 14",
-      "name" : "Truc",
-      "coordinates": "46.20138083544109, -1.3214190869336358"
+      "hint": "Plage de Port Notre Dame",
+      "name" : "Plage de Port Notre Dame",
+      "coordinates": "46.1444983815792, -1.296558361409013"
     },
     {
-      "hint": "Position 14",
-      "name" : "Truc",
-      "coordinates": "46.20138083544109, -1.3114190869336358"
+      "hint": "Loix : Les éveillards",
+      "name" : "Les éveillards",
+      "coordinates": "46.213663573979346, -1.4408286996583721",
+      "radiusMeters" : 80
+    }, 
+    {
+      "hint": "Loix : Plage de la Mer du Nord",
+      "name" : "Loix : Plage de la Mer du Nord",
+      "coordinates": "46.20524495649141, -1.4261063206852649",
+      "radiusMeters" : 100
+    }, {
+      "hint": "Le point culminant de l'île de Ré",
+      "name" : "Stèle du Peu des Aumonts",
+      "coordinates": "46.17641797827524, -1.3647672874705226",
+      "radiusMeters" : 100
+    }, 
+    {
+      "hint": "Plage de l’Anse Imbert",
+      "name" : "Plage de l’Anse Imbert",
+      "coordinates": "46.15461185410263, -1.3489553603073563",
+      "radiusMeters" : 80
+    },
+    {
+      "hint": "Le port de La Flotte",
+      "name" : "Le port de La Flotte",
+      "coordinates": "46.18798961325552, -1.324058526557122",
+      "radiusMeters" : 100
     }
   ]
 }

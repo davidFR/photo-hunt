@@ -40,6 +40,12 @@
       "name" : "Salle de sport",
       "radiusMeters" : 40,
       "coordinates": "46.327913892445004, -0.4874032239385228"
+    }, 
+    {
+      "hint": "L'arbre devant le I",
+      "name" : "Arbre du Bâtiment I",
+      "radiusMeters" : 10,
+      "coordinates": "46.33025104954995, -0.48753485061176854"     
     }
   ]
 }

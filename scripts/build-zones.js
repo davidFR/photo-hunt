@@ -8,6 +8,7 @@ const printOutputDir = path.join(__dirname, "..", "print");
 const SUPPORTED_SPLITS = ["syllable", "word", "mot"];
 const SAME_COORDINATE_THRESHOLD_METERS = 1;
 const MAX_REASONABLE_OVERLAP_METERS = 5;
+const NO_CLUE_REWARD = "D\u00E9sol\u00E9, ce site n'a pas d'indices";
 
 function main() {
   const cli = parseCliArgs(process.argv.slice(2));
@@ -40,9 +41,9 @@ function main() {
     throw new Error("La solution ne produit aucun fragment apres decoupage.");
   }
 
-  if (rewards.length !== places.length) {
+  if (rewards.length > places.length) {
     throw new Error(
-      "Le nombre de lieux doit correspondre au nombre de fragments de solution (places=" +
+      "Le nombre de fragments de solution ne peut pas depasser le nombre de lieux (places=" +
         places.length +
         ", fragments=" +
         rewards.length +
@@ -58,6 +59,11 @@ function main() {
     const placeIndex = shuffledPlaceIndexes[rewardIndex];
     places[placeIndex].reward = reward;
   });
+
+  for (let rewardIndex = rewards.length; rewardIndex < shuffledPlaceIndexes.length; rewardIndex += 1) {
+    const placeIndex = shuffledPlaceIndexes[rewardIndex];
+    places[placeIndex].reward = NO_CLUE_REWARD;
+  }
 
   const zones = places.map(function (place, index) {
     const zone = {

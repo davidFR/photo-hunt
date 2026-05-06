@@ -7,15 +7,23 @@ Application web 100% statique pour valider des zones de jeu à partir de la géo
 ```text
 app/
 ├── app.js
+├── data/
+│   └── cycle-routes.osm.json
 ├── index.html
 ├── maif.svg
 ├── poi-overview.js
 ├── README.md
 ├── scripts/
-│   └── build-zones.js
+│   ├── build-zones.js
+│   └── update-cycle-routes.sh
 ├── style.css
 ├── vendor/
-│   └── exifr-lite.umd.js
+│   ├── exifr-lite.umd.js
+│   └── leaflet/
+│       ├── leaflet.css
+│       ├── leaflet.js
+│       ├── LICENSE
+│       └── images/
 ├── vercel.json
 └── gameConfig.json
 ```
@@ -27,8 +35,32 @@ app/
 - `app.js` : chargement de configuration, géolocalisation navigateur, geofencing, anti-doublon localStorage, rendu UI.
 - `poi-overview.js` : regroupement des POI en secteurs approximatifs et rendu OSM (Leaflet).
 - `gameConfig.json` : fichier de configuration charge côté client.
+- `data/cycle-routes.osm.json` : extrait OSM local des itinéraires vélo (utilisé sans appel Overpass au runtime).
 - `scripts/build-zones.js` : script de préparation pour définir ou regénérer `gameConfig.json` avant le jeu.
+- `scripts/update-cycle-routes.sh` : met a jour l'extrait local des itinéraires vélo depuis Overpass (operation ponctuelle).
 - `vercel.json` : headers `no-store` pour éviter un cache stale de `gameConfig.json`.
+
+## Dependances cartographiques
+
+- Leaflet est auto-heberge dans `vendor/leaflet` (plus de dependance CDN au runtime).
+- Le fond de carte utilise toujours les tuiles OpenStreetMap (`tile.openstreetmap.org`).
+- Les pistes cyclables sont lues depuis `data/cycle-routes.osm.json` (fichier local). Le site n'interroge plus Overpass au runtime.
+
+Mettre a jour le fichier local des pistes cyclables:
+
+```bash
+./scripts/update-cycle-routes.sh
+```
+
+Vous pouvez fournir un chemin de sortie et une bbox personnalisee:
+
+```bash
+./scripts/update-cycle-routes.sh ./data/cycle-routes.osm.json 46.08,-1.75,46.33,-1.15
+```
+
+Attribution/licence:
+- Leaflet: BSD-2-Clause (`vendor/leaflet/LICENSE`).
+- Donnees OpenStreetMap (fonds et donnees velo): ODbL, attribution requise a OpenStreetMap.
 
 ## Fonctionnement
 

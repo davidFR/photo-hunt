@@ -1,235 +1,78 @@
 {
   "game": {
-    "id": "650c30ca84d4",
-    "name": "La Confrérie des Stéphane",
-    "description": "Jeu coopératif - Île de Ré",
+    "id": "2fffb73adb31",
+    "name": "Test du jeu sur le siège MAIF",
+    "description": "Jeu coopératif - Siège MAIF",
     "maxAgeMinutes": 240,
-    "defaultRadiusMeter": 30
+    "defaultRadiusMeter": 15
   },
   "map": {
-    "gridMeters": 2000
+    "gridMeters": 170
   },
   "zones": [
     {
-      "id": "18bcb9cd73fdb03d",
-      "hint": "Saint-Clément-des-Baleines : je guide la nuit",
+      "id": "9b7c9dfe346869df",
+      "hint": "La déesse protégeant le siège",
       "center": {
-        "lat": 46.24432514933755,
-        "lng": -1.561394660482297
+        "lat": 46.330266447007624,
+        "lng": -0.4859257076293209
       },
-      "reward": "14=po",
-      "name": "Le phare des baleines",
-      "radiusMeters": 50
+      "reward": "Désolé, ce site n'a pas d'indices",
+      "name": "La minerve"
     },
     {
-      "id": "c5a4aec9e05f3421",
-      "hint": "Saint-Clément-des-Baleines : Position 2",
+      "id": "dc8705adf3532044",
+      "hint": "Rien de tel qu'un bon café",
       "center": {
-        "lat": 46.2412004378898,
-        "lng": -1.5617976307129895
+        "lat": 46.328448417320644,
+        "lng": -0.4859707849509553
       },
-      "reward": "11=pla",
-      "name": "Abri du canot de sauvetage"
+      "reward": "1=Vive",
+      "name": "Le bar MAIF"
     },
     {
-      "id": "867376b5738c2079",
-      "hint": "Saint-Clément-des-Baleines : Position 3",
+      "id": "c9d196f89a7c100b",
+      "hint": "Un bâtiment plein de managers",
       "center": {
-        "lat": 46.243546388670495,
-        "lng": -1.5534280640093392
+        "lat": 46.329995418778516,
+        "lng": -0.4867759127609441
       },
-      "reward": "17=la",
-      "name": "La Pyramide des Chaumes",
-      "radiusMeters": 50
+      "reward": "4=du",
+      "name": "Bâtiment I",
+      "radiusMeters": 30
     },
     {
-      "id": "779715c4c9c299fd",
-      "hint": "Entre La Flotte et Rivedoux : fortifions-nous",
+      "id": "0e7e1c7b57d1faa6",
+      "hint": "Bienvenue à vous",
       "center": {
-        "lat": 46.18075302056117,
-        "lng": -1.288699780424664
+        "lat": 46.331201359978444,
+        "lng": -0.48491173679766814
       },
-      "reward": "2=mment",
-      "name": "Fort La Prée",
-      "radiusMeters": 130
+      "reward": "3=fête",
+      "name": "Accueil",
+      "radiusMeters": 20
     },
     {
-      "id": "0febc742a349230a",
-      "hint": "Ars-en-Ré : Position 3",
+      "id": "5ecde8d7f43c36ba",
+      "hint": "Un peu d'effort pour garder la ligne",
       "center": {
-        "lat": 46.20782016748613,
-        "lng": -1.5156334494630086
+        "lat": 46.327913892445004,
+        "lng": -0.4874032239385228
       },
-      "reward": "1=Co",
-      "name": "Eglise d'Ars-en-Ré",
+      "reward": "2=la",
+      "name": "Salle de sport",
       "radiusMeters": 40
     },
     {
-      "id": "280e79a56af8f606",
-      "hint": "Entre La Flotte et Rivedoux : Position 4",
+      "id": "44a8ede25e56868e",
+      "hint": "L'arbre devant le I",
       "center": {
-        "lat": 46.18582657617541,
-        "lng": -1.2973742784337656
+        "lat": 46.33025104954995,
+        "lng": -0.48753485061176854
       },
-      "reward": "20=tion",
-      "name": "Abbaye des Châteliers",
-      "radiusMeters": 50
-    },
-    {
-      "id": "b7b7463b60c4e4ec",
-      "hint": "Saint-Martin-de-Ré : Position 5",
-      "center": {
-        "lat": 46.20317446085296,
-        "lng": -1.3684762548873834
-      },
-      "reward": "21=client",
-      "name": "Eglise de Saint-Martin de Ré et son Clocher Observatoire",
-      "radiusMeters": 40
-    },
-    {
-      "id": "a9e0582743a5885d",
-      "hint": "Saint-Martin-de-Ré : Position 6",
-      "center": {
-        "lat": 46.20043589090053,
-        "lng": -1.361600972937928
-      },
-      "reward": "3=ré",
-      "name": "Porte Thoiras"
-    },
-    {
-      "id": "b79a21f2c8aa5b7e",
-      "hint": "Saint-Martin-de-Ré : Position 7",
-      "center": {
-        "lat": 46.199516286032164,
-        "lng": -1.3631291467158886
-      },
-      "reward": "8=pre",
-      "name": "La poudrière"
-    },
-    {
-      "id": "86cb31beebbac895",
-      "hint": "Près de Loix : Position 8",
-      "center": {
-        "lat": 46.22703567773298,
-        "lng": -1.4160239665865793
-      },
-      "reward": "18=re",
-      "name": "La plage du Grouin",
-      "radiusMeters": 200
-    },
-    {
-      "id": "762c97e570d1ffe5",
-      "hint": "Le Bois-Plage-en-Ré : Position 9",
-      "center": {
-        "lat": 46.19347909070046,
-        "lng": -1.3701488800328823
-      },
-      "reward": "16=de",
-      "name": "Le Moulin de Bellère"
-    },
-    {
-      "id": "b615b7f088bf54a1",
-      "hint": "Les Portes-en-Ré : Position 10",
-      "center": {
-        "lat": 46.24059564602441,
-        "lng": -1.5036885922911911
-      },
-      "reward": "4=cu",
-      "name": "Maison du Fier",
-      "radiusMeters": 50
-    },
-    {
-      "id": "4133c49256795156",
-      "hint": "Les Portes-en-Ré : Position 11",
-      "center": {
-        "lat": 46.23523265668335,
-        "lng": -1.481594791992791
-      },
-      "reward": "6=rer",
-      "name": "La Maison-Phare de Trousse-Chemise",
-      "radiusMeters": 40
-    },
-    {
-      "id": "9445e8b5a2fc8dfa",
-      "hint": "Entre la Couarde-sur-Mer et Ars-en-Ré : Position 12",
-      "center": {
-        "lat": 46.20321648149895,
-        "lng": -1.472964591823978
-      },
-      "reward": "12=ce",
-      "name": "La Digue du Boutillon",
-      "radiusMeters": 400
-    },
-    {
-      "id": "1bfc83ca1b70e382",
-      "hint": "Ars-en-Ré : Position 13",
-      "center": {
-        "lat": 46.19444760228498,
-        "lng": -1.5001853999608747
-      },
-      "reward": "15=dium",
-      "name": "Les Cabanes de Douaniers d’Ars-en-Ré",
-      "radiusMeters": 100
-    },
-    {
-      "id": "0b52a3f471c2edb5",
-      "hint": "Sur la plage : blockhaus A, b ou C ?",
-      "center": {
-        "lat": 46.184458530175405,
-        "lng": -1.411198476196625
-      },
-      "reward": "5=pé",
-      "name": "Le Bois-Plage-en-Ré : Batterie Hertha B"
-    },
-    {
-      "id": "e7d2e43fa26be83a",
-      "hint": "En pleine forêt : trouver la batterie allemande",
-      "center": {
-        "lat": 46.21838259310512,
-        "lng": -1.5321058223623816
-      },
-      "reward": "7=la",
-      "name": "Ars-en-Ré : Batterie Karola"
-    },
-    {
-      "id": "1572897b18c1f8fe",
-      "hint": "Le blockhaus de la Plage de La Salée",
-      "center": {
-        "lat": 46.146435962318016,
-        "lng": -1.3236524162807268
-      },
-      "reward": "13=du",
-      "name": "Sainte-Marie-de-Ré : Batterie Ella"
-    },
-    {
-      "id": "14f6c245d4f59895",
-      "hint": "Position 14",
-      "center": {
-        "lat": 46.20138083544109,
-        "lng": -1.3314190869336358
-      },
-      "reward": "19=la",
-      "name": "Truc"
-    },
-    {
-      "id": "187a15a7ca81e1f7",
-      "hint": "Position 14",
-      "center": {
-        "lat": 46.20138083544109,
-        "lng": -1.3214190869336357
-      },
-      "reward": "10=re",
-      "name": "Truc"
-    },
-    {
-      "id": "08c64245a2ca1b25",
-      "hint": "Position 14",
-      "center": {
-        "lat": 46.20138083544109,
-        "lng": -1.3114190869336357
-      },
-      "reward": "9=miè",
-      "name": "Truc"
+      "reward": "5=slip",
+      "name": "Arbre du Bâtiment I",
+      "radiusMeters": 10
     }
   ]
 }
