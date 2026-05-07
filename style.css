@@ -63,6 +63,13 @@ input {
   min-width: 0;
 }
 
+.header-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .maif-logo {
   width: 56px;
   height: auto;
@@ -103,7 +110,7 @@ input {
 
 .help-fab {
   position: static;
-  margin-left: auto;
+  margin-left: 0;
   width: 34px;
   height: 34px;
   border: none;
@@ -114,6 +121,10 @@ input {
   color: #fff;
   font-size: 1.1rem;
   font-weight: 700;
+}
+
+.fullscreen-fab {
+  font-size: 1rem;
 }
 
 .help-fab:hover,
@@ -865,6 +876,10 @@ input {
     width: 28px;
     height: 28px;
     font-size: 0.95rem;
+  }
+
+  .header-actions {
+    gap: 10px;
   }
 
   #overviewView {

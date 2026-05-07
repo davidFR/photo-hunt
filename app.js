@@ -9,6 +9,7 @@
     gameName: document.getElementById("gameName"),
     gameDescription: document.getElementById("gameDescription"),
     gameInfo: document.getElementById("gameInfo"),
+    fullscreenToggle: document.getElementById("fullscreenToggle"),
     helpToggle: document.getElementById("helpToggle"),
     helpPanel: document.getElementById("helpPanel"),
     helpClose: document.getElementById("helpClose"),
@@ -51,6 +52,7 @@
     bindEvents();
     await loadConfig();
     renderMainView();
+    syncFullscreenButton();
   }
 
   function bindEvents() {
@@ -94,8 +96,13 @@
       elements.helpClose.addEventListener("click", closeHelpPanel);
     }
 
+    if (elements.fullscreenToggle) {
+      elements.fullscreenToggle.addEventListener("click", toggleFullscreen);
+    }
+
     document.addEventListener("keydown", handleGlobalKeydown);
     document.addEventListener("click", handleGlobalClick);
+    document.addEventListener("fullscreenchange", syncFullscreenButton);
 
     window.addEventListener("resize", updateProgressPill);
     window.addEventListener("orientationchange", updateProgressPill);
@@ -173,9 +180,42 @@
       updateGameInfo();
     } catch (error) {
       state.config = null;
-      updateGameInfo("Configuration non chargee.");
+      updateGameInfo("Configuration non chargée.");
       setOverviewStatus("Impossible de charger un gameConfig.json valide.", "error");
     }
+  }
+
+  async function toggleFullscreen() {
+    if (!document.fullscreenEnabled) {
+      setOverviewStatus("Le plein écran n'est pas disponible dans ce navigateur.", "warning");
+      return;
+    }
+
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch (error) {
+      setOverviewStatus("Impossible d'activer le plein écran.", "warning");
+    }
+  }
+
+  function syncFullscreenButton() {
+    if (!elements.fullscreenToggle) {
+      return;
+    }
+
+    const isFullscreen = Boolean(document.fullscreenElement);
+
+    elements.fullscreenToggle.textContent = isFullscreen ? "⤡" : "⤢";
+    elements.fullscreenToggle.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
+    elements.fullscreenToggle.setAttribute(
+      "aria-label",
+      isFullscreen ? "Quitter le plein écran" : "Activer le plein écran"
+    );
+    elements.fullscreenToggle.title = isFullscreen ? "Quitter le plein écran" : "Activer le plein écran";
   }
 
   function renderMainView() {
@@ -423,14 +463,14 @@
     }
 
     if (!state.config || !Array.isArray(state.config.zones) || state.config.zones.length === 0) {
-      elements.placesList.innerHTML = '<li class="empty-state">Aucun lieu configure.</li>';
+      elements.placesList.innerHTML = '<li class="empty-state">Aucun lieu configuré.</li>';
       return;
     }
 
     elements.placesList.innerHTML = state.config.zones
       .map(function (zone) {
         const found = isZoneFound(zone.id);
-        const statusLabel = found ? "Trouve" : "A decouvrir";
+        const statusLabel = found ? "Récompense : " + formatReward(zone.reward) : "À découvrir";
         const zoneTitle = resolveZoneDisplayTitle(zone);
         const zoneSubtitle = found && zone.name ? zone.hint : "";
 
@@ -513,7 +553,7 @@
     const displayTitle = resolveZoneDisplayTitle(zone);
 
     if (elements.missionMeta) {
-      elements.missionMeta.textContent = found ? "Lieu deja trouve" : "Lieu a decouvrir";
+      elements.missionMeta.textContent = found ? "Lieu déjà trouvé" : "Lieu à découvrir";
     }
 
     if (elements.missionTitle) {
@@ -521,15 +561,23 @@
     }
 
     if (elements.missionHint) {
-      elements.missionHint.textContent = zone.hint;
+      elements.missionHint.hidden = found;
+      elements.missionHint.textContent = found ? "" : zone.hint;
     }
 
     if (elements.geolocationButton) {
+      elements.geolocationButton.hidden = found;
       elements.geolocationButton.disabled = found || state.isLoadingValidation;
-      elements.geolocationButton.textContent = found ? "Lieu deja valide" : "Valider ce lieu";
+      elements.geolocationButton.textContent = "Valider ce lieu";
     }
 
-    if (!preserveStatus) {
+    if (found) {
+      setMissionStatus(
+        "Récompense trouvée : <strong>" + escapeHtml(formatReward(zone.reward)) + "</strong>",
+        "success",
+        true
+      );
+    } else if (!preserveStatus) {
       setMissionStatus("", "warning", false);
     }
   }
@@ -545,17 +593,17 @@
     }
 
     if (!navigator.geolocation) {
-      setOverviewStatus("La geolocalisation navigateur n'est pas disponible sur cet appareil.", "error");
+      setOverviewStatus("La géolocalisation navigateur n'est pas disponible sur cet appareil.", "error");
       return;
     }
 
     if (!window.isSecureContext) {
-      setOverviewStatus("La geolocalisation navigateur exige une page HTTPS.", "error");
+      setOverviewStatus("La géolocalisation navigateur exige une page HTTPS.", "error");
       return;
     }
 
     setOverviewLocateBusy(true);
-    setOverviewStatus("Recuperation de votre position actuelle...", "warning");
+    setOverviewStatus("Récupération de votre position actuelle...", "warning");
 
     try {
       const position = await getCurrentPosition();
@@ -571,9 +619,9 @@
         );
       }
 
-      setOverviewStatus("Votre position est affichee en bleu sur la carte.", "success");
+      setOverviewStatus("Votre position est affichée en bleu sur la carte.", "success");
     } catch (error) {
-      setOverviewStatus(error.message || "Impossible de recuperer votre position.", resolveStatusVariant(error.message));
+      setOverviewStatus(error.message || "Impossible de récupérer votre position.", resolveStatusVariant(error.message));
     } finally {
       setOverviewLocateBusy(false);
     }
@@ -621,28 +669,27 @@
 
     const selectedZone = getSelectedZone();
     if (!selectedZone) {
-      setMissionStatus("Choisissez un lieu avant de lancer la geolocalisation.", "warning", false);
+      setMissionStatus("Choisissez un lieu avant de lancer la géolocalisation.", "warning", false);
       return;
     }
 
     if (!navigator.geolocation) {
-      setMissionStatus("La geolocalisation navigateur n'est pas disponible sur cet appareil.", "error", false);
+      setMissionStatus("La géolocalisation navigateur n'est pas disponible sur cet appareil.", "error", false);
       return;
     }
 
     if (!window.isSecureContext) {
-      setMissionStatus("La geolocalisation navigateur exige une page HTTPS.", "error", false);
+      setMissionStatus("La géolocalisation navigateur exige une page HTTPS.", "error", false);
       return;
     }
 
     if (hasExistingValidation(selectedZone.id)) {
       renderMissionContent(selectedZone, false);
-      setMissionStatus("Ce lieu est deja valide sur cet appareil.", "warning", false);
       return;
     }
 
     setValidationBusy(true);
-    setMissionStatus("Recuperation de votre position actuelle...", "warning", false);
+    setMissionStatus("Récupération de votre position actuelle...", "warning", false);
 
     try {
       const position = await getCurrentPosition();
@@ -675,7 +722,7 @@
 
     if (distanceMeters > zoneRadius) {
       if (distanceMeters > FAR_HINT_THRESHOLD_METERS) {
-        throw new Error("Vous etes encore loin de ce lieu.");
+        throw new Error("Vous êtes encore loin de ce lieu.");
       }
 
       throw new Error("Vous vous rapprochez.");
@@ -689,7 +736,7 @@
       distanceMeters: distanceMeters,
       accuracyMeters: Number.isFinite(position.accuracy) ? position.accuracy : null,
       validatedAt: new Date().toISOString(),
-      source: "Geolocalisation navigateur"
+      source: "Géolocalisation navigateur"
     };
 
     saveValidation(record);
@@ -701,15 +748,8 @@
   }
 
   function renderMissionValidationResult(validation) {
-    const namePart = validation.zone.name
-      ? "Lieu trouve: <strong>" + escapeHtml(validation.zone.name) + "</strong>. "
-      : "Lieu trouve. ";
-
     setMissionStatus(
-      namePart +
-        "Votre recompense : <strong>" +
-        escapeHtml(formatReward(validation.zone.reward)) +
-        "</strong>",
+      "Récompense trouvée : <strong>" + escapeHtml(formatReward(validation.zone.reward)) + "</strong>",
       "success",
       true
     );
@@ -725,10 +765,10 @@
     }
 
     if (error && error.code === error.TIMEOUT) {
-      return new Error("Le delai de geolocalisation a expire.");
+      return new Error("Le délai de géolocalisation a expiré.");
     }
 
-    return new Error("Impossible de recuperer la position actuelle.");
+    return new Error("Impossible de récupérer la position actuelle.");
   }
 
   function getCurrentPosition() {
@@ -934,7 +974,9 @@
 
     if (
       normalized.includes("refusee") ||
+      normalized.includes("refusée") ||
       normalized.includes("deja valide") ||
+      normalized.includes("déjà validé") ||
       normalized.includes("rapprochez") ||
       normalized.includes("loin")
     ) {
@@ -979,7 +1021,7 @@
       state.config.zones.length +
       " lieu(x) · rayon " +
       Math.round(state.config.game.defaultRadiusMeter) +
-      " m · mode geolocalisation";
+      " m · mode géolocalisation";
 
     if (extraMessage) {
       message += " · " + extraMessage;
@@ -1060,19 +1102,19 @@
 
     if (platform === "android") {
       return (
-        "Permission de geolocalisation refusee. Android: ouvrez les parametres du navigateur, " +
+        "Permission de géolocalisation refusée. Android: ouvrez les paramètres du navigateur, " +
         "section site/page, puis Position > Autoriser. Rechargez ensuite la page."
       );
     }
 
     if (platform === "ios") {
       return (
-        "Permission de geolocalisation refusee. iPhone: Reglages > Safari > Localisation > Autoriser, " +
+        "Permission de géolocalisation refusée. iPhone: Réglages > Safari > Localisation > Autoriser, " +
         "puis revenez sur la page et rechargez-la."
       );
     }
 
-    return "Permission de geolocalisation refusee. Autorisez la localisation dans le navigateur puis rechargez la page.";
+    return "Permission de géolocalisation refusée. Autorisez la localisation dans le navigateur puis rechargez la page.";
   }
 
   function detectMobilePlatform() {

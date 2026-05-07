@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Validation locale de zones de jeu par geolocalisation navigateur.">
-  <title>Jeu cooperatif</title>
+  <meta name="description" content="Validation locale de zones de jeu par géolocalisation navigateur.">
+  <title>Jeu coopératif</title>
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -14,35 +14,38 @@
       <h2>Aide</h2>
       <button id="helpClose" class="help-close" type="button" aria-label="Fermer l'aide">Fermer</button>
     </div>
-    <h3>Etapes</h3>
+    <h3>Étapes</h3>
     <ol class="help-steps">
       <li>Explorez la carte et touchez un lieu.</li>
-      <li>Une mission s'ouvre (sans carte detaillee).</li>
+      <li>Une mission s'ouvre (sans carte détaillée).</li>
       <li>Si besoin, utilisez Afficher ma position (sans valider) sur la carte principale.</li>
       <li>Dans la mission, touchez Valider ce lieu.</li>
-      <li>Autorisez la geolocalisation si le navigateur la demande.</li>
-      <li>Si vous etes au bon endroit, la recompense vous sera donnee.</li>
+      <li>Autorisez la géolocalisation si le navigateur la demande.</li>
+      <li>Si vous êtes au bon endroit, la récompense vous sera donnée.</li>
     </ol>
-    <h3>Regles rapides</h3>
+    <h3>Règles rapides</h3>
     <ul class="rules-list">
-      <li>La geolocalisation navigateur doit etre autorisee.</li>
-      <li>La precision GPS varie selon le telephone et l'environnement.</li>
-      <li>Si la permission est refusee: Android (parametres du navigateur > site/page > Position > Autoriser), iPhone (Reglages > Safari > Localisation > Autoriser), puis rechargez la page.</li>
+      <li>La géolocalisation navigateur doit être autorisée.</li>
+      <li>La précision GPS varie selon le téléphone et l'environnement.</li>
+      <li>Si la permission est refusée: Android (paramètres du navigateur > site/page > Position > Autoriser), iPhone (Réglages > Safari > Localisation > Autoriser), puis rechargez la page.</li>
       <li>Une zone déjà validée sur cet appareil est refusée.</li>
     </ul>
-    <h3>Confidentialite</h3>
-    <p>Aucune photo n'est demandee. Les validations sont stockees localement sur votre appareil.</p>
-    <p id="gameInfo">Chargement des parametres du jeu...</p>
+    <h3>Confidentialité</h3>
+    <p>Aucune photo n'est demandée. Les validations sont stockées localement sur votre appareil.</p>
+    <p id="gameInfo">Chargement des paramètres du jeu...</p>
   </section>
 
   <header class="site-header" role="banner">
     <div class="site-header__inner">
       <img src="maif.svg" class="maif-logo" alt="Logo MAIF">
       <div class="site-header__texts">
-        <p id="gameName" class="eyebrow">Jeu cooperatif</p>
-        <h1 id="gameDescription" class="site-title">Validation geolocalisee</h1>
+        <p id="gameName" class="eyebrow">Jeu coopératif</p>
+        <h1 id="gameDescription" class="site-title">Validation géolocalisée</h1>
       </div>
-      <button id="helpToggle" class="help-fab" type="button" aria-label="Ouvrir l'aide" aria-expanded="false" aria-controls="helpPanel">?</button>
+      <div class="header-actions">
+        <button id="fullscreenToggle" class="help-fab fullscreen-fab" type="button" aria-label="Activer le plein écran" title="Activer le plein écran" aria-pressed="false">⤢</button>
+        <button id="helpToggle" class="help-fab" type="button" aria-label="Ouvrir l'aide" aria-expanded="false" aria-controls="helpPanel">?</button>
+      </div>
     </div>
   </header>
 
@@ -66,7 +69,6 @@
       </div>
 
       <div id="placesPanel" class="card places-card" role="tabpanel" aria-labelledby="tabPlaces" hidden>
-        <p class="hint panel-intro">Vert = trouve. Gris = a decouvrir. Touchez un lieu pour ouvrir sa mission.</p>
         <ul id="placesList" class="places-list"></ul>
       </div>
     </section>
@@ -85,7 +87,7 @@
   </main>
 
   <noscript>
-    <p class="noscript">Cette application necessite JavaScript pour acceder a la geolocalisation et valider les zones.</p>
+    <p class="noscript">Cette application nécessite JavaScript pour accéder à la géolocalisation et valider les zones.</p>
   </noscript>
 
   <script src="vendor/leaflet/leaflet.js"></script>
