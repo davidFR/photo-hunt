@@ -3,10 +3,12 @@ const path = require("path");
 const crypto = require("crypto");
 
 const outputFile = path.join(__dirname, "..", "gameConfig.json");
+const printOutputDir = path.join(__dirname, "..", "print");
 
 const SUPPORTED_SPLITS = ["syllable", "word", "mot"];
 const SAME_COORDINATE_THRESHOLD_METERS = 1;
 const MAX_REASONABLE_OVERLAP_METERS = 5;
+const NO_CLUE_REWARD = "D\u00E9sol\u00E9, ce site n'a pas d'indices";
 
 function main() {
   const cli = parseCliArgs(process.argv.slice(2));
@@ -22,6 +24,7 @@ function main() {
   validateDescriptorSyntax(descriptorInput);
 
   const game = normalizeGameConfig(descriptorInput.game);
+  const mapConfig = normalizeMapConfig(descriptorInput);
 
   const places = extractPlaces(descriptorInput).map(function (place, index) {
     return normalizePlace(place, index);
@@ -38,9 +41,9 @@ function main() {
     throw new Error("La solution ne produit aucun fragment apres decoupage.");
   }
 
-  if (rewards.length !== places.length) {
+  if (rewards.length > places.length) {
     throw new Error(
-      "Le nombre de lieux doit correspondre au nombre de fragments de solution (places=" +
+      "Le nombre de fragments de solution ne peut pas depasser le nombre de lieux (places=" +
         places.length +
         ", fragments=" +
         rewards.length +
@@ -57,10 +60,15 @@ function main() {
     places[placeIndex].reward = reward;
   });
 
+  for (let rewardIndex = rewards.length; rewardIndex < shuffledPlaceIndexes.length; rewardIndex += 1) {
+    const placeIndex = shuffledPlaceIndexes[rewardIndex];
+    places[placeIndex].reward = NO_CLUE_REWARD;
+  }
+
   const zones = places.map(function (place, index) {
     const zone = {
       id: generateZoneId(place, index),
-      label: place.label,
+      hint: place.hint,
       center: place.center,
       reward: place.reward
     };
@@ -85,6 +93,9 @@ function main() {
       description: game.description,
       maxAgeMinutes: game.maxAgeMinutes,
       defaultRadiusMeter: game.defaultRadiusMeter
+    },
+    map: {
+      gridMeters: mapConfig.gridMeters
     },
     zones: zones
   };
@@ -120,6 +131,13 @@ function main() {
         config.game.defaultRadiusMeter +
         " m"
     );
+
+    const printDocPath = generatePrintableInfographic(
+      config,
+      mapConfig.gridMeters,
+      game.defaultRadiusMeter
+    );
+    console.log("Document imprimable genere : " + printDocPath);
   }
 
   validationWarnings.forEach(function (warning) {
@@ -128,11 +146,13 @@ function main() {
 }
 
 function printUsageAndExit() {
-  console.error("Usage: node scripts/build-zones.js [--check] <descriptif_jeu.json>");
+  console.error("Usage: node scripts/build-zones.js <descriptif_jeu.json> [--check]");
   console.error("- descriptif_jeu.json: lieux + metadonnees game + solution { value, split }");
   console.error("- game.defaultRadiusMeter: rayon par defaut en metres");
+  console.error("- map.gridMeters (optionnel): granularite des secteurs approximatifs en metres");
   console.error("- places[].radiusMeters (optionnel): surcharge locale du rayon");
-  console.error("- places[].name (optionnel): nom technique, non affiche dans l'application");
+  console.error("- places[].hint (ou places[].label): indice affiche au joueur");
+  console.error("- places[].name (optionnel): nom exact, revele uniquement apres validation");
   console.error("- --check: valide sans ecrire gameConfig.json");
   process.exit(1);
 }
@@ -143,26 +163,27 @@ function parseCliArgs(args) {
     descriptorPath: ""
   };
 
-  const positional = [];
-
-  args.forEach(function (arg) {
-    if (arg === "--check") {
-      options.checkOnly = true;
-      return;
-    }
-
-    if (arg.startsWith("-")) {
-      throw new Error("Option inconnue: " + arg);
-    }
-
-    positional.push(arg);
-  });
-
-  if (positional.length > 1) {
-    throw new Error("Trop d'arguments. Un seul fichier descriptif est attendu.");
+  if (args.length === 0) {
+    return options;
   }
 
-  options.descriptorPath = positional[0] || "";
+  if (args.length > 2) {
+    throw new Error("Arguments invalides. Utilisez: <descriptif_jeu.json> [--check]");
+  }
+
+  if (args[0].startsWith("-")) {
+    throw new Error("Le premier argument doit etre le fichier descriptif.");
+  }
+
+  options.descriptorPath = args[0];
+
+  if (args.length === 2) {
+    if (args[1] !== "--check") {
+      throw new Error("Option inconnue: " + args[1]);
+    }
+    options.checkOnly = true;
+  }
+
   return options;
 }
 
@@ -194,6 +215,35 @@ function validateDescriptorSyntax(descriptorInput) {
   if (!Array.isArray(descriptorInput.places) && !Array.isArray(descriptorInput.zones)) {
     throw new Error("Le champ 'places' (ou 'zones') doit etre un tableau.");
   }
+
+  if (descriptorInput.map !== undefined && (typeof descriptorInput.map !== "object" || descriptorInput.map === null || Array.isArray(descriptorInput.map))) {
+    throw new Error("Le champ 'map' doit etre un objet JSON s'il est present.");
+  }
+
+  if (descriptorInput.maps !== undefined && (typeof descriptorInput.maps !== "object" || descriptorInput.maps === null || Array.isArray(descriptorInput.maps))) {
+    throw new Error("Le champ 'maps' doit etre un objet JSON s'il est present.");
+  }
+
+  if (descriptorInput.map && descriptorInput.maps) {
+    throw new Error("Utilisez soit 'map', soit 'maps', pas les deux.");
+  }
+}
+
+function normalizeMapConfig(descriptorInput) {
+  const rawMapConfig = descriptorInput.map || descriptorInput.maps || {};
+  const gridMeters = readOptionalPositiveNumber(rawMapConfig.gridMeters, "map.gridMeters");
+  const gridDeg = readOptionalPositiveNumber(rawMapConfig.gridDeg, "map.gridDeg");
+
+  const resolvedGridMeters =
+    gridMeters !== null
+      ? gridMeters
+      : gridDeg !== null
+        ? gridDeg * 111320
+        : 2200;
+
+  return {
+    gridMeters: resolvedGridMeters
+  };
 }
 
 function readSolution(rawSolution) {
@@ -311,14 +361,14 @@ function normalizePlace(rawPlace, index) {
     throw new Error("Chaque element de places doit etre un objet JSON (index " + index + ").");
   }
 
-  const label = readRequiredString(rawPlace.label, "places[" + index + "].label");
+  const hint = readRequiredString(rawPlace.hint || rawPlace.label, "places[" + index + "].hint");
   const name = readOptionalString(rawPlace.name);
 
   const coordinateText = readFirstString(rawPlace, ["coordinates", "coord", "coords", "latLng", "google", "position"]);
   const radiusMeters = readOptionalPositiveNumber(rawPlace.radiusMeters, "places[" + index + "].radiusMeters");
   const radiusMeterLegacy = readOptionalPositiveNumber(rawPlace.radiusMeter, "places[" + index + "].radiusMeter");
 
-  const locationHint = name || label || "(lieu sans nom)";
+  const locationHint = name || hint || "(lieu sans nom)";
 
   if (!coordinateText) {
     throw new Error("Le lieu '" + locationHint + "' ne contient pas de coordonnees texte.");
@@ -331,7 +381,7 @@ function normalizePlace(rawPlace, index) {
   const effectiveRadius = radiusMeters !== null ? radiusMeters : radiusMeterLegacy;
 
   return {
-    label: label,
+    hint: hint,
     name: name,
     center: parseCoordinateText(coordinateText),
     radiusMeters: effectiveRadius,
@@ -431,7 +481,7 @@ function resolvePlaceRadius(place, defaultRadiusMeter) {
 }
 
 function getPlaceIdentifier(place) {
-  return place.name || place.label || "(lieu inconnu)";
+  return place.name || place.hint || "(lieu inconnu)";
 }
 
 function readPositiveNumber() {
@@ -522,7 +572,7 @@ function readRequiredPositiveNumber(value, fieldName) {
 }
 
 function generateZoneId(place, index) {
-  const raw = [index, place.name || "", place.label, place.center.lat, place.center.lng, place.radiusMeters || ""].join("|");
+  const raw = [index, place.name || "", place.hint, place.center.lat, place.center.lng, place.radiusMeters || ""].join("|");
   return crypto.createHash("sha1").update(raw).digest("hex").slice(0, 16);
 }
 
@@ -561,6 +611,201 @@ function shuffle(items) {
   }
 
   return copy;
+}
+
+function generatePrintableInfographic(config, gridMeters, defaultRadiusMeter) {
+  fs.mkdirSync(printOutputDir, { recursive: true });
+
+  fs.readdirSync(printOutputDir)
+    .filter(function (fileName) {
+      return fileName.toLowerCase().endsWith(".html");
+    })
+    .forEach(function (fileName) {
+      fs.unlinkSync(path.join(printOutputDir, fileName));
+    });
+
+  const overview = buildApproximatePoiOverview(config.zones, {
+    gridMeters: gridMeters,
+    defaultRadiusMeter: defaultRadiusMeter
+  });
+
+  const html = buildPrintableInfographicHtml(config, overview);
+  const outputPath = path.join(printOutputDir, "carte_des_lieux.html");
+
+  fs.writeFileSync(outputPath, html, "utf8");
+
+  return outputPath;
+}
+
+function buildApproximatePoiOverview(zones, options) {
+  const gridMeters = Number(options && options.gridMeters);
+  const gridSizeMeters = Number.isFinite(gridMeters) && gridMeters > 0 ? gridMeters : 2200;
+  const defaultRadiusMeter = Number(options && options.defaultRadiusMeter);
+  const effectiveDefaultRadius = Number.isFinite(defaultRadiusMeter) && defaultRadiusMeter > 0 ? defaultRadiusMeter : 20;
+  const groups = new Map();
+
+  zones.forEach(function (zone) {
+    const bucket = toGridBucket(zone.center, gridSizeMeters);
+    const latBucket = bucket.latBucket;
+    const lngBucket = bucket.lngBucket;
+    const key = latBucket + ":" + lngBucket;
+
+    if (!groups.has(key)) {
+      groups.set(key, {
+        key: key,
+        latSum: 0,
+        lngSum: 0,
+        count: 0,
+        points: []
+      });
+    }
+
+    const group = groups.get(key);
+    group.latSum += zone.center.lat;
+    group.lngSum += zone.center.lng;
+    group.count += 1;
+    const zoneRadius = Number.isFinite(Number(zone.radiusMeters)) && Number(zone.radiusMeters) > 0
+      ? Number(zone.radiusMeters)
+      : effectiveDefaultRadius;
+    group.points.push({
+      center: zone.center,
+      radiusMeters: zoneRadius
+    });
+  });
+
+  const clusters = Array.from(groups.values()).map(function (group, index) {
+    const centerLat = group.latSum / group.count;
+    const centerLng = group.lngSum / group.count;
+    const clusterCenter = { lat: centerLat, lng: centerLng };
+    const enclosingRadius = group.points.reduce(function (maxRadius, point) {
+      const required = haversineDistance(clusterCenter, point.center) + point.radiusMeters;
+      return Math.max(maxRadius, required);
+    }, 0);
+
+    return {
+      id: "secteur-" + (index + 1),
+      count: group.count,
+      lat: centerLat,
+      lng: centerLng,
+      radiusMeters: Math.max(1, Math.ceil(enclosingRadius))
+    };
+  });
+
+  return {
+    totalCount: zones.length,
+    clusters: clusters,
+    bounds: buildApproximateBounds(zones)
+  };
+}
+
+function buildApproximateBounds(zones) {
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+
+  zones.forEach(function (zone) {
+    minLat = Math.min(minLat, zone.center.lat);
+    maxLat = Math.max(maxLat, zone.center.lat);
+    minLng = Math.min(minLng, zone.center.lng);
+    maxLng = Math.max(maxLng, zone.center.lng);
+  });
+
+  return {
+    southWest: [minLat, minLng],
+    northEast: [maxLat, maxLng]
+  };
+}
+
+function toGridBucket(center, gridMeters) {
+  const metersPerDegreeLng = Math.max(111320 * Math.cos((center.lat * Math.PI) / 180), 1);
+  const latMeters = center.lat * 111320;
+  const lngMeters = center.lng * metersPerDegreeLng;
+
+  return {
+    latBucket: Math.round(latMeters / gridMeters),
+    lngBucket: Math.round(lngMeters / gridMeters)
+  };
+}
+
+function buildPrintableInfographicHtml(config, overview) {
+  const gameName = escapeHtml(config.game.name);
+  const gameDescription = escapeHtml(config.game.description);
+  const overviewData = JSON.stringify(overview);
+
+  return (
+    "<!doctype html>\n" +
+    '<html lang="fr">\n' +
+    "<head>\n" +
+    '  <meta charset="utf-8">\n' +
+    '  <meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+    '  <title>Carte des lieux - ' +
+    gameName +
+    "</title>\n" +
+    '  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">\n' +
+    "  <style>\n" +
+    "    html, body { height: 100%; }\n" +
+    "    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; color: #1f2933; }\n" +
+    "    .page { min-height: 100vh; display: flex; flex-direction: column; }\n" +
+    "    .banner { background: #fff; border-bottom: 1px solid #dbe4f0; padding: 12px 16px 10px; }\n" +
+    "    .head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px; }\n" +
+    "    h1 { margin: 0; font-size: 1.3rem; font-weight: 700; }\n" +
+    "    .count { margin: 0; font-size: 1.1rem; font-weight: 700; }\n" +
+    "    .description { margin: 0; color: #475467; }\n" +
+    "    #map { flex: 1; min-height: 0; width: 100%; }\n" +
+    "    .cluster-icon { background: transparent; border: none; }\n" +
+    "    .cluster-icon span { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 999px; border: 2px solid #fff; background: #e0001c; color: #fff; font-weight: 800; box-shadow: 0 8px 20px rgba(224, 0, 28, 0.35); }\n" +
+    "    @media print { @page { margin: 0; } .page { min-height: 100vh; } .banner { border-bottom: 1px solid #cbd5e1; } }\n" +
+    "  </style>\n" +
+    "</head>\n" +
+    "<body>\n" +
+    '  <main class="page">\n' +
+    '    <section class="banner">\n' +
+    '      <div class="head">\n' +
+    "        <h1>" +
+    gameName +
+    "</h1>\n" +
+    "        <p class=\"count\">" +
+    overview.totalCount +
+    " lieu(x)</p>\n" +
+    "      </div>\n" +
+    "      <p class=\"description\">" +
+    gameDescription +
+    "</p>\n" +
+    "    </section>\n" +
+    '    <div id="map" role="img" aria-label="Carte imprimer secteur approximatif"></div>\n' +
+    "  </main>\n" +
+    '  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>\n' +
+    "  <script>\n" +
+    "    const overview = " +
+    overviewData +
+    ";\n" +
+    "    const map = L.map('map', { zoomControl: false, attributionControl: true, zoomSnap: 0.25, zoomDelta: 0.25, wheelPxPerZoomLevel: 120 });\n" +
+    "    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);\n" +
+    "    overview.clusters.forEach(function (cluster) {\n" +
+    "      L.circle([cluster.lat, cluster.lng], { radius: cluster.radiusMeters, color: '#e0001c', fillColor: '#e0001c', fillOpacity: 0.14, weight: 2 }).addTo(map);\n" +
+    "      const marker = L.marker([cluster.lat, cluster.lng], {\n" +
+    "        icon: L.divIcon({ className: 'cluster-icon', html: '<span>' + cluster.count + '</span>', iconSize: [42, 42], iconAnchor: [21, 21] })\n" +
+    "      }).addTo(map);\n" +
+    "      marker.bindTooltip('Secteur approximatif - ' + cluster.count + ' POI', { direction: 'top', sticky: true });\n" +
+    "    });\n" +
+    "    const sw = overview.bounds.southWest;\n" +
+    "    const ne = overview.bounds.northEast;\n" +
+    "    if (sw[0] === ne[0] && sw[1] === ne[1]) { map.setView(sw, 14); } else { map.fitBounds([sw, ne], { padding: [34, 34] }); }\n" +
+    "    setTimeout(function () { map.invalidateSize(); }, 0);\n" +
+    "  </script>\n" +
+    "</body>\n" +
+    "</html>\n"
+  );
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 try {

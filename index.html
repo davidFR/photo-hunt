@@ -3,83 +3,95 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Validation locale de zones de jeu par geolocalisation navigateur.">
-  <title>Jeu cooperatif</title>
+  <meta name="description" content="Validation locale de zones de jeu par géolocalisation navigateur.">
+  <title>Jeu coopératif</title>
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <button id="helpToggle" class="help-fab" type="button" aria-label="Ouvrir l'aide" aria-expanded="false" aria-controls="helpPanel">?</button>
   <section id="helpPanel" class="card help-panel" hidden aria-label="Aide">
     <div class="help-panel__head">
       <h2>Aide</h2>
       <button id="helpClose" class="help-close" type="button" aria-label="Fermer l'aide">Fermer</button>
     </div>
-    <h3>Etapes</h3>
+    <h3>Étapes</h3>
     <ol class="help-steps">
-      <li>Touchez le bouton Geolocalise-moi.</li>
-      <li>Autorisez la geolocalisation si le navigateur la demande.</li>
-      <li>Si vous etes au bon endroit, la recompense vous sera donnee.</li>
-      <li>Vous pouvez consulter l'ensemble de vos récompenses tout au long du jeu.</li>
+      <li>Explorez la carte et touchez un lieu.</li>
+      <li>Une mission s'ouvre (sans carte détaillée).</li>
+      <li>Si besoin, utilisez Afficher ma position (sans valider) sur la carte principale.</li>
+      <li>Dans la mission, touchez Valider ce lieu.</li>
+      <li>Autorisez la géolocalisation si le navigateur la demande.</li>
+      <li>Si vous êtes au bon endroit, la récompense vous sera donnée.</li>
     </ol>
-    <h3>Regles rapides</h3>
+    <h3>Règles rapides</h3>
     <ul class="rules-list">
-      <li>La geolocalisation navigateur doit etre autorisee.</li>
-      <li>La precision GPS varie selon le telephone et l'environnement.</li>
-      <li>Si la permission est refusee: Android (parametres du navigateur > site/page > Position > Autoriser), iPhone (Reglages > Safari > Localisation > Autoriser), puis rechargez la page.</li>
+      <li>La géolocalisation navigateur doit être autorisée.</li>
+      <li>La précision GPS varie selon le téléphone et l'environnement.</li>
+      <li>Si la permission est refusée: Android (paramètres du navigateur > site/page > Position > Autoriser), iPhone (Réglages > Safari > Localisation > Autoriser), puis rechargez la page.</li>
       <li>Une zone déjà validée sur cet appareil est refusée.</li>
     </ul>
-    <h3>Confidentialite</h3>
-    <p>Aucune photo n'est demandee. Les validations sont stockees localement sur votre appareil.</p>
-    <p id="gameInfo">Chargement des parametres du jeu...</p>
+    <h3>Confidentialité</h3>
+    <p>Aucune photo n'est demandée. Les validations sont stockées localement sur votre appareil.</p>
+    <p id="gameInfo">Chargement des paramètres du jeu...</p>
   </section>
 
   <header class="site-header" role="banner">
     <div class="site-header__inner">
       <img src="maif.svg" class="maif-logo" alt="Logo MAIF">
-      <div>
-        <p id="gameName" class="eyebrow">Jeu cooperatif</p>
-        <h1 id="gameDescription" class="site-title">Validation geolocalisee</h1>
+      <div class="site-header__texts">
+        <p id="gameName" class="eyebrow">Jeu coopératif</p>
+        <h1 id="gameDescription" class="site-title">Validation géolocalisée</h1>
+      </div>
+      <div class="header-actions">
+        <button id="fullscreenToggle" class="help-fab fullscreen-fab" type="button" aria-label="Activer le plein écran" title="Activer le plein écran" aria-pressed="false">⤢</button>
+        <button id="helpToggle" class="help-fab" type="button" aria-label="Ouvrir l'aide" aria-expanded="false" aria-controls="helpPanel">?</button>
       </div>
     </div>
   </header>
 
   <main class="page">
-    <section class="layout">
-      <div class="stack">
-        <form id="gameForm" class="card form-card" novalidate>
-          <section class="form-section" aria-labelledby="geoTitle">
-            <div class="section-head">
-              <h2 id="geoTitle" class="boxed-title">Valider une zone</h2>
-            </div>
-            <p class="hint">Mode simple: aucune photo n'est necessaire pour valider un lieu.</p>
-            <div class="actions">
-              <button id="geolocationButton" class="button" type="button">Geolocalise-moi</button>
-            </div>
-            <div id="statusBox" class="notice" aria-live="polite" hidden></div>
-          </section>
-        </form>
+    <section id="overviewView" class="view view--active" aria-label="Interface principale">
+      <nav class="overview-tabs" role="tablist" aria-label="Navigation principale">
+        <button id="tabMap" class="overview-tab overview-tab--active" type="button" role="tab" aria-selected="true" aria-controls="mapPanel">Carte</button>
+        <button id="tabPlaces" class="overview-tab" type="button" role="tab" aria-selected="false" aria-controls="placesPanel">Lieux</button>
+      </nav>
 
-        <section class="card result-card" aria-labelledby="resultTitle">
-          <div class="section-head">
-            <h2 id="resultTitle" class="boxed-title">Lieux validés</h2>
-          </div>
-          <div id="summaryEmpty" class="empty-state">Aucune zone validée sur cet appareil.</div>
-          <ul id="summaryList" class="summary-list" hidden></ul>
+      <div id="mapPanel" class="card map-stage-card" role="tabpanel" aria-labelledby="tabMap">
+        <div class="panel-intro map-top-row">
+          <p id="progressPill" class="progress-pill">0 / 0</p>
+          <button id="locateOnOverviewButton" class="button button--secondary button--map-inline" type="button">
+            <span class="poi-mini-icon" aria-hidden="true"></span>
+            <span class="map-position-label">Ma position</span>
+          </button>
+        </div>
+        <div id="overviewMap" class="overview-map overview-map--large" role="img" aria-label="Carte interactive des lieux"></div>
+        <div id="overviewStatusBox" class="notice panel-intro" aria-live="polite" hidden></div>
+      </div>
 
-          <div class="section-head summary-head--result">
-            <h2 id="pendingTitle" class="boxed-title">Lieux à découvrir</h2>
-          </div>
-          <div id="pendingEmpty" class="empty-state" hidden>Tous les lieux ont été découverts.</div>
-          <ul id="pendingList" class="summary-list" hidden></ul>
-        </section>
+      <div id="placesPanel" class="card places-card" role="tabpanel" aria-labelledby="tabPlaces" hidden>
+        <ul id="placesList" class="places-list"></ul>
+      </div>
+    </section>
+
+    <section id="missionModal" class="mission-modal" hidden>
+      <button id="missionBackdrop" class="mission-modal__backdrop" type="button" aria-label="Fermer la mission"></button>
+      <div class="card mission-modal__panel" role="dialog" aria-modal="true" aria-labelledby="missionTitle">
+        <button id="missionClose" class="mission-modal__close" type="button" aria-label="Fermer la mission">×</button>
+        <p id="missionMeta" class="mission-meta"></p>
+        <h2 id="missionTitle" class="mission-title">Mission</h2>
+        <p id="missionHint" class="mission-hint"></p>
+        <div id="missionStatusBox" class="notice" aria-live="polite" hidden></div>
+        <button id="geolocationButton" class="button mission-validate-btn" type="button">Valider ce lieu</button>
       </div>
     </section>
   </main>
 
   <noscript>
-    <p class="noscript">Cette application necessite JavaScript pour acceder a la geolocalisation et valider les zones.</p>
+    <p class="noscript">Cette application nécessite JavaScript pour accéder à la géolocalisation et valider les zones.</p>
   </noscript>
 
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="poi-overview.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
